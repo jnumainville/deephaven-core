@@ -15,7 +15,7 @@ class CallbackAdapter {
     }
 
     @SuppressWarnings("unused")
-    public void registerObjectType(String name, PyObject objectTypeAdapter) {
-        callback.register(new ObjectTypeAdapter(name, objectTypeAdapter));
+    public void registerObjectType(String name, PyObject objectTypeAdapter, PyObject jsPluginInfo)  {
+        callback.register(new ObjectTypeAdapter(name, objectTypeAdapter, jsPluginInfo));
     }
 }

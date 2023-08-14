@@ -26,7 +26,21 @@ class RegistrationAdapter(Registration.Callback):
             # If registering a class, instantiate it before adapting it and passing to java
             plugin = plugin()
         if isinstance(plugin, ObjectType):
-            self._callback.registerObjectType(plugin.name, ObjectTypeAdapter(plugin))
+
+            js_plugin_info = {}
+            try:
+                js_plugin_info = {
+                    "name": plugin.js_name(),
+                    "main": plugin.js_main(),
+                    "path": str(plugin.js_path()),
+                    "version": plugin.js_version()
+                }
+
+                print(str(plugin.js_path()))
+            except Exception as e:
+                # Js plugin is optional, so if it fails to load, continue
+                pass
+            self._callback.registerObjectType(plugin.name, ObjectTypeAdapter(plugin), js_plugin_info)
         else:
             raise NotImplementedError
 

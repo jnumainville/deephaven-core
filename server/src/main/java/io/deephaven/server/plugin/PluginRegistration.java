@@ -10,9 +10,13 @@ import io.deephaven.io.logger.Logger;
 import io.deephaven.plugin.Plugin;
 import io.deephaven.plugin.Registration;
 import io.deephaven.plugin.Registration.Callback;
+import io.deephaven.plugin.type.JsPluginFile;
+import io.deephaven.plugin.type.JsPluginInfo;
 import io.deephaven.plugin.type.ObjectType;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -38,13 +42,27 @@ public final class PluginRegistration {
         for (Registration registration : registrations) {
             log.info().append("Invoking registration: ").append(registration.toString()).endl();
             registration.registerInto(counting);
+            counting.registerJs();
         }
+
         log.info().append("Registered plugins: ").append(counting).endl();
     }
 
     private class Counting implements Registration.Callback, LogOutputAppendable, Plugin.Visitor<Counting> {
 
         private int objectTypeCount = 0;
+
+        private List<JsPluginInfo> jsPlugins = new ArrayList<>();
+
+        private List<String> paths = new ArrayList<>();
+
+        public void registerJs() {
+
+            JsPluginFile.addPlugins(jsPlugins, paths);
+
+
+        
+        }
 
         @Override
         public void register(Plugin plugin) {
@@ -53,6 +71,16 @@ public final class PluginRegistration {
 
         @Override
         public Counting visit(ObjectType objectType) {
+            String path = objectType.getJsPath();
+            log.info().append("Path is currently: ").append(path).endl();
+            JsPluginInfo jsPluginInfo = objectType.getJsPluginInfo();
+            if (paths != null) {
+                this.paths.add(path);
+            }
+            if (jsPluginInfo != null) {
+                this.jsPlugins.add(jsPluginInfo);
+            }
+
             log.info().append("Registering object type: ")
                     .append(objectType.name()).append(" / ")
                     .append(objectType.toString())

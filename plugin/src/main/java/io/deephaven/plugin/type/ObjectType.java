@@ -99,4 +99,16 @@ public interface ObjectType extends Plugin {
             Optional<String> type();
         }
     }
+
+    /**
+     * The js plugin info.
+     */
+    public default JsPluginInfo getJsPluginInfo() { return null; }
+
+    /**
+     * The js path.
+     */
+    public default String getJsPath() { return null; }
+
+
 }
